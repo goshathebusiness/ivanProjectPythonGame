@@ -13,6 +13,9 @@ carImage2=pyglet.image.load('resources/car2.png')
 carImage3=pyglet.image.load('resources/car3.png')
 backlightsImage=pyglet.image.load('resources/backlights.png')
 
+rockImage1=pyglet.image.load('resources/rock.png')
+treeImage1=pyglet.image.load('resources/tree.png')
+
 carImages=[carImage1, carImage2, carImage3] # текстурки используемые для машины, чтобы потом их удобно менять
 
 background1=pyglet.sprite.Sprite(backgroundImage, x=0, y=900)
@@ -22,9 +25,15 @@ road2=pyglet.sprite.Sprite(roadImage, x=0, y=-900)
 car=pyglet.sprite.Sprite(carImage1, x=0, y=150)
 backlights=pyglet.sprite.Sprite(backlightsImage, x=car.x, y=car.y)
 
-sprites=[background1, background2, road1, road2,backlights, car ] # порядок спрайтов в этом списке = приоритет на экране.
-moveObj1=[background1, road1]
-moveObj2=[background2, road2]
+rock1=pyglet.sprite.Sprite(rockImage1, x=0, y=0)
+tree1=pyglet.sprite.Sprite(treeImage1, x=0, y=0)
+rock2=pyglet.sprite.Sprite(rockImage1, x=0, y=0)
+tree2=pyglet.sprite.Sprite(treeImage1, x=0, y=0)
+
+sprites=[background1, background2, road1, road2, rock1, rock2, tree1, tree2, backlights, car ] # порядок спрайтов в этом списке = приоритет на экране.
+moveObj1=[background1, road1, rock1, tree1]
+moveObj2=[background2, road2, rock2, tree2]
+decor=[rock1, rock2, tree1, tree2]
 
 for i in sprites:
     i.x=window.width/2-i.width/2
@@ -86,17 +95,27 @@ def playerMove(car, frame):
     if down==True and car.y > 0:
         car.y-=frame*100
         backlights.y=car.y
-       
+
+def decorRandomizer():
+    def decorXRandomizer(decor):
+        decor.x=random.randint(0,backgroundImage.width)
+    for i in decor:
+        decorXRandomizer(i)
+        while i.x in range(450,750):
+            decorXRandomizer(i)
+        
 
 def groundMove(frame):
     for i in moveObj1:
         i.y-=frame*1000
         if i.y<=0:
             i.y=900
+            decorRandomizer()
     for i in moveObj2:
         i.y-=frame*1000
         if i.y<=-900:
             i.y=0
+            decorRandomizer()
         
 frametime=0
 skinNow=0
