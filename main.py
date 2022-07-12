@@ -37,35 +37,56 @@ def on_draw():
 
 right=False
 left=False
+up=False
+down=False
 
 @window.event
 def on_key_press(symbol, modifiers):
-    global  right, left, fire, game
+    global  right, left, up, down
     if symbol == key.RIGHT:
         right = True
     if symbol == key.LEFT:
         left = True
     if symbol == key.SPACE:
         pass
+    if symbol == key.UP:
+        up = True
+    if symbol == key.DOWN:
+        down = True
+
 
 @window.event
 def on_key_release(symbol, modifiers):
-    global right, left, fire
+    global right, left, up, down
     if symbol == key.RIGHT:
         right = False
     if symbol == key.LEFT:
         left = False
+    if symbol == key.UP:
+        up = False
+    if symbol == key.DOWN:
+        down = False
 
 def playerMove(car, frame):
-    if right==True and car.x < window.width/2+backgroundImage.width/2:
+    if right==True and car.x < 600:
         car.x+=frame*100
         backlights.x=car.x
-        print(window.width/2+backgroundImage.width/2)
         
-    if left==True and car.x > window.width/2-backgroundImage.width/2:
+        
+    if left==True and car.x > 440:
         car.x-=frame*100
         backlights.x=car.x
-        print(window.width/2-backgroundImage.width/2)
+
+    
+    if up==True and car.y < 600:
+        car.y+=frame*100
+        backlights.y=car.y
+
+
+    if down==True and car.y > 0:
+        car.y-=frame*100
+        backlights.y=car.y
+       
 
 def groundMove(frame):
     for i in moveObj1:
@@ -86,3 +107,4 @@ def update(frame):
 if __name__ == "__main__":
     pyglet.clock.schedule_interval(update, 1.0/60)
     pyglet.app.run()
+    
