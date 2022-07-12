@@ -98,11 +98,25 @@ def groundMove(frame):
         if i.y<=-900:
             i.y=0
         
+frametime=0
+skinNow=0
+
+def changeSkin(frame):
+    global frametime, skinNow
+    frametime+=frame
+    if frametime>=0.5:
+        print(skinNow)
+        car.image=carImages[skinNow]
+        if skinNow<len(carImages)-1:
+            skinNow+=1
+        else:
+            skinNow=0
+        frametime=0
+
 def update(frame):
     groundMove(frame)
     playerMove(car, frame)
-    if str(frame)[-1]=='2':
-        car.image=carImages[random.randint(0,len(carImages)-1)]
+    changeSkin(frame)
 
 if __name__ == "__main__":
     pyglet.clock.schedule_interval(update, 1.0/60)
