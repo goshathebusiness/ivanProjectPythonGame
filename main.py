@@ -35,19 +35,19 @@ class Car():
         pass
 
     def acceleration(self):
-        self.speed+=40-math.sqrt(math.ceil(self.speed))
+        self.speed+=30-math.sqrt(abs(self.speed))
     def brake(self):
         if self.speed<0:
             self.speed=0
             return
-        self.speed-=(1000+math.ceil(self.speed))/100
+        self.speed-=(1000+math.ceil(abs(self.speed)))/100
     def idle(self):
         if self.speed<0:
             self.speed=0
             return
         self.speed-=self.speed/2500
     def turnSpeedUpdate(self):
-        self.turnSpeed=(40+math.sqrt(math.ceil(self.speed)))
+        self.turnSpeed=(40+math.sqrt(abs(self.speed)))
 
 
 car=Car()
@@ -59,10 +59,10 @@ road2=pyglet.sprite.Sprite(roadImage, x=0, y=0)
 
 backlights=pyglet.sprite.Sprite(backlightsImage, x=car.sprite.x, y=car.sprite.y)
 
-rock1=pyglet.sprite.Sprite(rockImage1, x=0, y=0)
-tree1=pyglet.sprite.Sprite(treeImage1, x=0, y=0)
-rock2=pyglet.sprite.Sprite(rockImage1, x=0, y=0)
-tree2=pyglet.sprite.Sprite(treeImage1, x=0, y=0)
+rock1=pyglet.sprite.Sprite(rockImage1, x=0, y=1000)
+tree1=pyglet.sprite.Sprite(treeImage1, x=0, y=1000)
+rock2=pyglet.sprite.Sprite(rockImage1, x=0, y=1000)
+tree2=pyglet.sprite.Sprite(treeImage1, x=0, y=1000)
 speed=pyglet.text.Label(str(0), x=0, y=0)
 speed.color=(255,255,255,255)
 speed.font_size=72
@@ -78,7 +78,17 @@ moveObj2=[background2, road2]
 
 decor=[rock1, rock2, tree1, tree2]
 
-
+def decorStart():
+    for i in range(5):
+        j=pyglet.sprite.Sprite(treeImage1, x=-200, y=1000)
+        decor.append(j)
+        sprites.append(j)
+    for i in range(5):
+        j=pyglet.sprite.Sprite(rockImage1, x=-200, y=1000)
+        decor.append(j)
+        sprites.append(j)
+    
+decorStart()
 
 for i in sprites:
     try:
@@ -86,6 +96,8 @@ for i in sprites:
     except TypeError:
         pass
 
+for i in decor:
+    i.x=-200
 
 # 300 735
 @window.event
@@ -145,20 +157,23 @@ def playerMove(car, frame):
     if down==True:
         car.brake()
         if car.sprite.y > 50:
-            car.sprite.y-=frame*car.speed/2
+            car.sprite.y-=frame*(50+math.sqrt(abs(car.speed)))
             backlights.y=car.sprite.y
     
     if up==False and down==False:
         car.idle()
         if car.sprite.y>50:
-            car.sprite.y-=frame*car.speed/5
+            car.sprite.y-=frame*(50-math.sqrt(abs(car.speed)))
             backlights.y=car.sprite.y
    
 def decorRandomizer(i):
+    xArr=[50, 100, 150, 200, 250, 300, 750, 800, 850, 900, 950, 1000, 1050]
     def decorXRandomizer(decor):
-        decor.x=random.randint(50,backgroundImage1.width-150)
+        decor.x=random.choice(xArr)
     def decorYRandomizer(decor):
         decor.y=random.randint(0,backgroundImage1.height)+900
+        
+        
     for j in decor:
         decorXRandomizer(i)
         decorYRandomizer(i)
@@ -167,20 +182,20 @@ def decorRandomizer(i):
 
 def groundMove(frame):
     for i in moveObj1:
-        i.y-=frame*1000
+        i.y-=frame*car.speed*3
         if i.y<=0:
             i.y=900
             background1.image=backgroundImages[random.randint(0,len(backgroundImages)-1)]
             
     for i in moveObj2:
-        i.y-=frame*1000
+        i.y-=frame*car.speed*3
         if i.y<=-900:
             i.y=0
             background2.image=backgroundImages[random.randint(0,len(backgroundImages)-1)]
 
 
     for i in decor:
-        i.y-=frame*1000
+        i.y-=frame*car.speed*3
         if i.y<=-900:
             i.y=1500
             decorRandomizer(i)
