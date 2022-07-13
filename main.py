@@ -28,6 +28,7 @@ class Car():
     sprite=pyglet.sprite.Sprite(carImage1, x=0, y=150)
     
     speed=250
+    turnSpeed=speed/5
     def __init__(self) -> None:
         pass
     def acceleration(self):
@@ -118,11 +119,11 @@ def on_key_release(symbol, modifiers):
 
 def playerMove(car, frame):
     if right==True and car.sprite.x < 600:
-        car.sprite.x+=frame*100
+        car.sprite.x+=frame*car.turnSpeed
         backlights.x=car.sprite.x
         
     if left==True and car.sprite.x > 440:
-        car.sprite.x-=frame*100
+        car.sprite.x-=frame*car.turnSpeed
         backlights.x=car.sprite.x
     
     if up==True:
@@ -190,6 +191,7 @@ def update(frame):
     changeSkin(frame)
     
     speed.text=str(int(car.speed))
+    car.turnSpeed=car.speed/5
 
 if __name__ == "__main__":
     pyglet.clock.schedule_interval(update, 1.0/60)
