@@ -24,3 +24,5 @@
         if i.y<=-900:
             i.y=1500
             decorRandomizer(i)
+
+            
