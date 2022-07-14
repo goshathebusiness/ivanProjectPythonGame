@@ -30,7 +30,12 @@ class Car():
             return
         self.speed-=self.speed/2500
     def turnSpeedUpdate(self):
-        self.turnSpeed=(40+math.sqrt(abs(self.speed)))
+        self.turnSpeed=(math.sqrt(abs(self.speed))*10)
+    def restart(self):
+        self.sprite.x=1200/2-carImage1.width/2
+        self.sprite.y=150
+    def crash(self):
+        self.speed=0
 
 
 car=Car()

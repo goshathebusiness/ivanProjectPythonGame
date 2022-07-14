@@ -29,7 +29,7 @@ background1=pyglet.sprite.Sprite(backgroundLevel1Image1, x=0, y=900)
 background2=pyglet.sprite.Sprite(backgroundLevel1Image1, x=1200/2-backgroundLevel1Image1.width/2, y=0)
 road1=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=900)
 road2=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=0)
-testRock=pyglet.sprite.Sprite(testRockImage, x=450, y=500)
+testRock=pyglet.sprite.Sprite(rockImage1, x=650, y=500)
 
 ### ТЕКСТ ###
 
@@ -86,7 +86,7 @@ def on_key_press(symbol, modifiers):
     if symbol==key.LEFT:
         left=True
     if symbol==key.SPACE:
-        car.sprite.rotation-=15
+        car.restart()
     if symbol==key.UP:
         up=True
     if symbol==key.DOWN:
@@ -110,12 +110,12 @@ def on_key_release(symbol, modifiers):
 
 def playerMove(car, frame):
     global frameCount
-    if right==True and car.sprite.x < 700:
+    if right==True and car.sprite.x < 900: #700
         car.sprite.x+=frame*car.turnSpeed
         if car.sprite.rotation<15:
             car.sprite.rotation+=2
         
-    if left==True and car.sprite.x > 500:
+    if left==True and car.sprite.x > 300: #500
         car.sprite.x-=frame*car.turnSpeed
         if car.sprite.rotation>-15:
             car.sprite.rotation-=2
@@ -188,13 +188,16 @@ def changeSkin(frame):
         else:
             skinNow=0
         frametime=0
-
+        
 def collision():
-    for i in obstacles:
-        if all(e in range(int(car.sprite.y-car.sprite.height//2),int(car.sprite.y+car.sprite.height//2)) for e in range(int(i.y),int(i.height)+int(i.y)))  and all(e in range(int(car.sprite.x-car.sprite.width//2),int(car.sprite.x+car.sprite.width//2)) for e in range(int(i.x),int(i.width//2)+ int(i.x))): # где-то тут проёб в цифрах, и коллизия срабатывает постоянно хотя не должна
-            print(int(car.sprite.y-car.sprite.height//2), int(car.sprite.y+car.sprite.height//2), )
-            print('COLLISION')
-            car.speed=0
+    for obstacle in obstacles:      
+        if obstacle.x>car.sprite.x+car.sprite.width//2 or obstacle.x+obstacle.width<car.sprite.x-car.sprite.width//2: #если самая левая точка препятствия меньше чем самая правая точка машины то пасс и т.д.
+            pass
+        elif obstacle.y>car.sprite.y+car.sprite.height//2 or obstacle.y+obstacle.height<car.sprite.y-car.sprite.height//2:
+            pass
+        else:
+            print('collision')
+            car.crash()
     
 
 frameCount=0
