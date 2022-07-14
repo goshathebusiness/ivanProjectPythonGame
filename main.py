@@ -29,7 +29,7 @@ background1=pyglet.sprite.Sprite(backgroundLevel1Image1, x=0, y=900)
 background2=pyglet.sprite.Sprite(backgroundLevel1Image1, x=1200/2-backgroundLevel1Image1.width/2, y=0)
 road1=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=900)
 road2=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=0)
-testRock=pyglet.sprite.Sprite(testRockImage, x=650, y=500)
+testRock=pyglet.sprite.Sprite(testRockImage, x=450, y=500)
 
 ### ТЕКСТ ###
 
@@ -191,10 +191,11 @@ def changeSkin(frame):
 
 def collision():
     for i in obstacles:
-        if all(e in range(int(car.sprite.y-car.sprite.height//2),int(car.sprite.y+car.sprite.height//2)) for e in range(int(i.y),int(i.height))) and all(e in range(int(car.sprite.x-car.sprite.width//2),int(car.sprite.x+car.sprite.width//2)) for e in range(int(i.x),int(i.width//2))): # где-то тут проёб в цифрах, и коллизия срабатывает постоянно хотя не должна
+        if all(e in range(int(car.sprite.y-car.sprite.height//2),int(car.sprite.y+car.sprite.height//2)) for e in range(int(i.y),int(i.height)+int(i.y)))  and all(e in range(int(car.sprite.x-car.sprite.width//2),int(car.sprite.x+car.sprite.width//2)) for e in range(int(i.x),int(i.width//2)+ int(i.x))): # где-то тут проёб в цифрах, и коллизия срабатывает постоянно хотя не должна
             print(int(car.sprite.y-car.sprite.height//2), int(car.sprite.y+car.sprite.height//2), )
             print('COLLISION')
             car.speed=0
+    
 
 frameCount=0
 
