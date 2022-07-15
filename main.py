@@ -166,19 +166,19 @@ def decorRandomizer(i): #300 735 границы дороги для спрайт
 
 def groundMove(frame):
     for i in moveObj1:
-        i.y-=frame*car.speed*3
+        i.y-=frame*car.speed*10
         if i.y<=0:
             i.y=900
             background1.image=backgroundLevel1Images[random.randint(0,len(backgroundLevel1Images)-1)]
             
     for i in moveObj2:
-        i.y-=frame*car.speed*3
+        i.y-=frame*car.speed*10
         if i.y<=-900:
             i.y=0
             background2.image=backgroundLevel1Images[random.randint(0,len(backgroundLevel1Images)-1)]
 
     for i in decor:
-        i.y-=frame*car.speed*3
+        i.y-=frame*car.speed*12
         if i.y<=-900:
             i.y=1500
             decorRandomizer(i)
@@ -188,6 +188,7 @@ skinNow=0
 
 def changeSkin(frame):
     global skinNow
+    
     if frameCount==10 or frameCount==20 or frameCount==30 or frameCount==40 or frameCount==50:
         car.sprite.image=carImages[skinNow]
         if skinNow<len(carImages)-1:
@@ -222,7 +223,7 @@ def update(frame):
     car.turnSpeedUpdate()
     
     speed.text=str(int(car.speed))
-    rpm.text=str(car.rpm)
+    rpm.text=str(int(car.rpm))
     gear.text=str(car.gear)
     
     frameCount+=1

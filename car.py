@@ -15,44 +15,46 @@ for i in carImages:
 class Car():
     sprite=pyglet.sprite.Sprite(carImage1, x=1200/2-carImage1.width/2, y=150)
     
-    speed=250
+    speed=20
     turnSpeed=(40-math.sqrt(math.ceil(speed)))
     rpm=2000
     gear=1
     def __init__(self) -> None:
         pass
     def acceleration(self):
-        self.speed+=30-math.sqrt(abs(self.speed))
-        self.rpmUpdate(50)
+        if self.speed<self.maxSpeed:
+            self.speed+=0.4
+        self.rpmUpdate()
     def brake(self):
         if self.speed<0:
             self.speed=0
             return
-        self.speed-=(1000+math.ceil(abs(self.speed)))/100
-        self.rpmUpdate(-200)
+        self.speed-=2
+        self.rpmUpdate()
     def idle(self):
         if self.speed<0:
             self.speed=0
             return
         self.speed-=self.speed/2500
-        self.rpmUpdate(-25)
+        self.rpmUpdate()
     def turnSpeedUpdate(self):
-        self.turnSpeed=(math.sqrt(abs(self.speed))*10)
+        self.turnSpeed=(math.sqrt(abs(self.speed))*20)
     def restart(self):
         self.sprite.x=1200/2-carImage1.width/2
         self.sprite.y=150
     def crash(self):
         self.speed=0
-    def rpmUpdate(self, change):
-        self.rpm+=change
+    def rpmUpdate(self):
+        self.rpm=8000*(self.speed-(self.gear-1)*40)/40
         if self.rpm>8000 and self.gear<6:
             self.gear+=1
-            self.rpm=2500
-        elif self.rpm<2000 and self.gear>1:
+            self.rpm=4500
+        elif self.rpm<1000 and self.gear>1:
             self.gear-=1
-            self.rpm=7500
+            self.rpm=6000
         elif self.rpm<0:
             self.rpm=0
-
+        self.maxSpeedGear=self.gear*40
+        self.maxSpeed=self.maxSpeedGear
 
 car=Car()
