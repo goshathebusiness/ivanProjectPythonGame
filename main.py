@@ -31,7 +31,7 @@ background2=pyglet.sprite.Sprite(backgroundLevel1Image1, x=1200/2-backgroundLeve
 road1=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=900)
 road2=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=0)
 testRock=pyglet.sprite.Sprite(rockImage1, x=650, y=500)
-
+obstacle1=pyglet.sprite.Sprite(rockImage1, x=-200, y=900)
 ### ТЕКСТ ###
 
 speed=pyglet.text.Label(str(0), x=0, y=50)
@@ -48,10 +48,10 @@ gear.font_size=72
 
 sprites=[background1, background2, road1, road2, speed, rpm, gear, testRock , car.sprite] # порядок спрайтов в массиве = приоритет на экране7
 backgroundLevel1Images=[backgroundLevel1Image1, backgroundLevel1Image2, backgroundLevel1Image3]
-moveObj1=[background1,road1, testRock]
-moveObj2=[background2, road2]
+moveObj1=[background1,road1 ]
+moveObj2=[background2, road2 ]
 decor=[]
-obstacles=[testRock]
+obstacles=[testRock,obstacle1]
 
 for i in range(10):
     i=pyglet.sprite.Sprite(rockImage1, x=-200, y=1000)
@@ -164,6 +164,11 @@ def decorRandomizer(i): #300 735 границы дороги для спрайт
     i.y=random.randint(0,900)+1800
     i.rotation=random.randint(-5,5)
 
+def obstacleRandomizer(i):
+    xArr=[450,600]
+    i.x=random.choice(xArr)
+
+
 def groundMove(frame):
     for i in moveObj1:
         i.y-=frame*car.speed*10
@@ -178,10 +183,16 @@ def groundMove(frame):
             background2.image=backgroundLevel1Images[random.randint(0,len(backgroundLevel1Images)-1)]
 
     for i in decor:
-        i.y-=frame*car.speed*12
+        i.y-=frame*car.speed*10
         if i.y<=-900:
             i.y=1500
             decorRandomizer(i)
+
+    for i in obstacles:
+        i.y-=frame*car.speed*10
+        if i.y<=-900:
+            i.y=1500
+            obstacleRandomizer(i)
         
 frametime=0
 skinNow=0
