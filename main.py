@@ -5,6 +5,7 @@ import math
 import threading
 
 from car import *
+from sounds import *
 
 window = pyglet.window.Window(width=1200, height=900, caption="Ivan: The Game", resizable=False)
 window.set_location(0, 30)
@@ -36,10 +37,16 @@ testRock=pyglet.sprite.Sprite(rockImage1, x=650, y=500)
 speed=pyglet.text.Label(str(0), x=0, y=50)
 speed.color=(255,255,255,255)
 speed.font_size=72
+rpm=pyglet.text.Label(str(0), x=0, y=50+72)
+rpm.color=(255,255,255,255)
+rpm.font_size=72
+gear=pyglet.text.Label(str(0), x=0, y=50+72+72)
+gear.color=(255,255,255,255)
+gear.font_size=72
 
 ### МАССИВЫ ###
 
-sprites=[background1, background2, road1, road2, speed, testRock , car.sprite] # порядок спрайтов в массиве = приоритет на экране7
+sprites=[background1, background2, road1, road2, speed, rpm, gear, testRock , car.sprite] # порядок спрайтов в массиве = приоритет на экране7
 backgroundLevel1Images=[backgroundLevel1Image1, backgroundLevel1Image2, backgroundLevel1Image3]
 moveObj1=[background1,road1, testRock]
 moveObj2=[background2, road2]
@@ -77,6 +84,7 @@ right=False
 left=False
 up=False
 down=False
+frameCount=0
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -112,12 +120,12 @@ def playerMove(car, frame):
     global frameCount
     if right==True and car.sprite.x < 900: #700
         car.sprite.x+=frame*car.turnSpeed
-        if car.sprite.rotation<15:
+        if car.sprite.rotation<10:
             car.sprite.rotation+=2
         
     if left==True and car.sprite.x > 300: #500
         car.sprite.x-=frame*car.turnSpeed
-        if car.sprite.rotation>-15:
+        if car.sprite.rotation>-10:
             car.sprite.rotation-=2
     
     if up==True:
@@ -144,11 +152,11 @@ def playerMove(car, frame):
             if frameCount>=59:
                 randomInteger=random.randint(0,4)
                 if randomInteger==0:
-                    car.sprite.rotation-=2
-                    car.sprite.x+=0.016*car.turnSpeed*4
+                    car.sprite.rotation-=5
+                    car.sprite.x+=0.016*car.turnSpeed*2
                 elif randomInteger==1:
-                    car.sprite.rotation+=2
-                    car.sprite.x-=0.016*car.turnSpeed*4
+                    car.sprite.rotation+=5 
+                    car.sprite.x-=0.016*car.turnSpeed*2
             
 def decorRandomizer(i): #300 735 границы дороги для спрайта шириной 150px
     xArr=[50, 100, 150, 200, 250, 300, 750, 800, 850, 900, 950, 1000, 1050]
@@ -179,15 +187,13 @@ frametime=0
 skinNow=0
 
 def changeSkin(frame):
-    global frametime, skinNow
-    frametime+=frame
-    if frametime>=0.5:
+    global skinNow
+    if frameCount==10 or frameCount==20 or frameCount==30 or frameCount==40 or frameCount==50:
         car.sprite.image=carImages[skinNow]
         if skinNow<len(carImages)-1:
             skinNow+=1
         else:
             skinNow=0
-        frametime=0
         
 def collision():
     for obstacle in obstacles:      
@@ -200,7 +206,7 @@ def collision():
             car.crash()
     
 
-frameCount=0
+
 
 def update(frame):
     global frameCount
@@ -216,6 +222,8 @@ def update(frame):
     car.turnSpeedUpdate()
     
     speed.text=str(int(car.speed))
+    rpm.text=str(car.rpm)
+    gear.text=str(car.gear)
     
     frameCount+=1
     if frameCount>=60:
@@ -223,7 +231,5 @@ def update(frame):
     
 if __name__ == "__main__":
     threading.Thread(target=pyglet.clock.schedule_interval(update, 1/60))
-
-    
-    
+    musicPlayer()
     pyglet.app.run()
