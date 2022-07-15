@@ -48,10 +48,10 @@ class Car():
         self.rpm=8000*(self.speed-(self.gear-1)*40)/40
         if self.rpm>8000 and self.gear<6:
             self.gear+=1
-            self.rpm=4500
+            #self.rpm=4500
         elif self.rpm<1000 and self.gear>1:
             self.gear-=1
-            self.rpm=6000
+            #self.rpm=6000
         elif self.rpm<0:
             self.rpm=0
         self.maxSpeedGear=self.gear*40
