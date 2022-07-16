@@ -24,6 +24,12 @@ testRockImage=pyglet.image.load('resources/kamen.png')
 rockImage1=pyglet.image.load('resources/rock.png')
 treeImage1=pyglet.image.load('resources/tree.png')
 
+cowImage1=pyglet.image.load('resources/cow1.png')
+cowImage2=pyglet.image.load('resources/cow2.png')
+
+speedometerImage=pyglet.image.load('resources/speedometer.png')
+targetImage=pyglet.image.load('resources/target.png')
+
 ### СПРАЙТЫ ### 
 
 background1=pyglet.sprite.Sprite(backgroundLevel1Image1, x=0, y=900)
@@ -32,6 +38,13 @@ road1=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=900)
 road2=pyglet.sprite.Sprite(roadImage, x=1200/2-roadImage.width/2, y=0)
 obstacle1=pyglet.sprite.Sprite(rockImage1, x=-200, y=900)
 obstacle2=pyglet.sprite.Sprite(rockImage1, x=-200, y=1800)
+
+cow1=pyglet.sprite.Sprite(cowImage1, x=-200, y=450)
+cow2=pyglet.sprite.Sprite(cowImage2, x=-200, y=1350)
+
+speedometer=pyglet.sprite.Sprite(speedometerImage, x=825, y=20)
+targetRPM=pyglet.sprite.Sprite(targetImage, x=1005, y=145)
+
 ### ТЕКСТ ###
 
 speed=pyglet.text.Label(str(0), x=0, y=50)
@@ -46,20 +59,20 @@ gear.font_size=72
 
 ### МАССИВЫ ###
 
-sprites=[background1, background2, road1, road2, speed, rpm, gear, obstacle1, obstacle2 , car.sprite] # порядок спрайтов в массиве = приоритет на экране7
+#sprites=[background1, background2, road1, road2, speed, rpm, gear, obstacle1, obstacle2 , car.sprite] # порядок спрайтов в массиве = приоритет на экране
 backgroundLevel1Images=[backgroundLevel1Image1, backgroundLevel1Image2, backgroundLevel1Image3]
 moveObj1=[background1,road1]
 moveObj2=[background2, road2]
 decor=[]
-obstacles=[obstacle1, obstacle2]
+obstacles=[obstacle1, obstacle2, cow1, cow2]
+interface=[speedometer, targetRPM,speed, rpm, gear]
+sprites=[moveObj1, moveObj2, decor, obstacles, car.sprite, interface] # порядок спрайтов в массиве = приоритет на экране
 
 for i in range(10):
     i=pyglet.sprite.Sprite(rockImage1, x=-200, y=1000)
-    sprites.append(i)
     decor.append(i)
 for i in range(10):
     i=pyglet.sprite.Sprite(treeImage1, x=-200, y=1000)
-    sprites.append(i)
     decor.append(i)
 
 for i in decor:
@@ -74,7 +87,11 @@ fps=pyglet.window.FPSDisplay(window=window)
 def on_draw():
     window.clear()
     for i in sprites:
-        i.draw()
+        if type(i)is tuple or type(i) is list:
+            for j in i:
+                j.draw()
+        else:
+            i.draw()
     fps.draw()
 
 threadOnDraw=threading.Thread(target=on_draw())
@@ -95,6 +112,7 @@ def on_key_press(symbol, modifiers):
         left=True
     if symbol==key.SPACE:
         car.restart()
+        targetRPM.rotation+=15
     if symbol==key.UP:
         up=True
     if symbol==key.DOWN:
@@ -130,25 +148,28 @@ def playerMove(car, frame):
     
     if up==True:
         car.acceleration()
-        if car.sprite.y < 400:
-            car.sprite.y+=frame*(50-math.sqrt(car.speed))
+        if car.sprite.y < 500:
+            #car.sprite.y+=frame*(40*car.gear-car.speed)
+            car.sprite.y+=(((500-car.sprite.y)/4)/100)
+            #print(car.sprite.y)
+            
 
     if down==True:
         car.brake()
-        if car.sprite.y > 50:
+        if car.sprite.y > 150:
             car.sprite.y-=frame*(50+math.sqrt(abs(car.speed)))
     
     if up==False and down==False:
         car.idle()
-        if car.sprite.y>50:
-            car.sprite.y-=frame*(50-math.sqrt(abs(car.speed)))
+        if car.sprite.y>150:
+            car.sprite.y-=frame*(car.speed//2-math.sqrt(abs(car.speed)))
     
     if left==False and right==False:
         if car.sprite.rotation>0:
             car.sprite.rotation-=1
         elif car.sprite.rotation<0:
             car.sprite.rotation+=1
-        elif car.sprite.rotation==0 and car.speed>600:    
+        elif car.sprite.rotation==0 and car.speed>160:    
             if frameCount>=59:
                 randomInteger=random.randint(0,4)
                 if randomInteger==0:
@@ -165,7 +186,7 @@ def decorRandomizer(i): #300 735 границы дороги для спрайт
     i.rotation=random.randint(-5,5)
 
 def obstacleRandomizer(i):
-    xArr=[420,650]
+    xArr=[390,420,450,480,510,540,570,600,630,660]
     i.x=random.choice(xArr)
 
 def groundMove(frame):
@@ -206,14 +227,11 @@ def changeSkin(frame):
         
 def collision():
     for obstacle in obstacles:      
-        if obstacle.x>car.sprite.x+car.sprite.width//2 or obstacle.x+obstacle.width<car.sprite.x-car.sprite.width//2: #если самая левая точка препятствия меньше чем самая правая точка машины то пасс и т.д.
+        if obstacle.x>(car.sprite.x+car.sprite.width//2)-15 or obstacle.x+obstacle.width<(car.sprite.x-car.sprite.width//2)+15: #если самая левая точка препятствия меньше чем самая правая точка машины то пасс и т.д.
             pass
-        elif obstacle.y>car.sprite.y+car.sprite.height//2 or obstacle.y+obstacle.height<car.sprite.y-car.sprite.height//2:
+        elif obstacle.y>car.sprite.y+car.sprite.height//2-15 or obstacle.y+obstacle.height<car.sprite.y: #-car.sprite.height//2: нижние 50% машины не участвуют в вертикальной коллизии
             pass
         else:
-            print('collision')
-            print(car.sprite.x, car.sprite.y)
-            print(obstacle.x, obstacle.y)
             car.crash()
 
 def update(frame):
@@ -232,6 +250,8 @@ def update(frame):
     speed.text=str(int(car.speed))
     rpm.text=str(int(car.rpm))
     gear.text=str(car.gear)
+    targetRPM.rotation=car.rpmRotation() #135=8000 -135=0 0=4000
+    
     
     frameCount+=1
     if frameCount>=60:
@@ -239,5 +259,6 @@ def update(frame):
     
 if __name__ == "__main__":
     threading.Thread(target=pyglet.clock.schedule_interval(update, 1/60))
-    musicPlayer()
+    #musicStart()
+    engineStart()
     pyglet.app.run()
